@@ -10,7 +10,7 @@ import {BoxV1} from "src/BoxV1.sol";
 contract UpgradeBox is Script {
     function run() external returns (address) {
         address mostRecentDeployment =
-            DevOpsTools.get_most_recent_deployment("ERC1967Proxy", block.chainid);
+            DevOpsTools.get_most_recent_deployment("Proxy", block.chainid);
 
         vm.startBroadcast();
         BoxV2 newBox = new BoxV2();
@@ -27,4 +27,3 @@ contract UpgradeBox is Script {
         return address(proxy);
     }
 }
-

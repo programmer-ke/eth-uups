@@ -2,6 +2,9 @@
 src = "src"
 out = "out"
 libs = ["lib"]
+fs_permissions = [
+	       { access = "read", path="./broadcast"},
+]
 
 remappings = [
  "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",

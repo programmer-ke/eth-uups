@@ -19,7 +19,7 @@ contract DeployAndUpgradeTest is Test {
         deployer = new DeployBox();
         upgrader = new UpgradeBox();
 
-        proxy = deployer.run(); // proxy has BoxV1 implemntation
+        proxy = deployer.run(); // proxy has BoxV1 implementation
     }
 
     function testNoV2FunctionalityBeforeUpgrade() public {
