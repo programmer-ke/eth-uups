@@ -6,8 +6,4 @@ import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.s
 
 contract Proxy is ERC1967Proxy {
     constructor(address implementation, bytes memory _data) ERC1967Proxy(implementation, _data) {}
-
-    function _unsafeAllowUninitialized() internal pure override returns (bool) {
-        return true;
-    }
 }

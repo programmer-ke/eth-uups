@@ -15,8 +15,9 @@ contract DeployBox is Script {
     function deployBox() public returns (address) {
         vm.startBroadcast();
         BoxV1 box = new BoxV1(); // deploy implementation
-        Proxy proxy = new Proxy(address(box), ""); // deploy proxy
-        BoxV1(address(proxy)).initialize(); // call implementation initializer
+
+        bytes memory data = abi.encodeCall(BoxV1.initialize, ()); // encode the initializer
+        Proxy proxy = new Proxy(address(box), data); // deploy proxy and call intializer
         vm.stopBroadcast();
         return address(proxy);
     }

@@ -1,6 +1,6 @@
 # Universal Upgradeable Proxy Standard
 
-A demonstration of ERC-1822 Upgradeable Smart Contracts
+A demonstration of EIP-1822 Upgradeable Smart Contracts
 
 The goal is to have a concrete example of upgrading a smart
 contract using the Universal Upgradeable Proxy Standard.
@@ -102,6 +102,43 @@ placeholders for the actual storage slots that are modified in the
 proxy contract, and should not be re-ordered in upgrades otherwise
 there'll be corruption of state. New state variables should be defined
 after existing ones in order.
+
+### Initialization
+
+Because implementation contracts should work on the Proxy's storage
+and not on their own, Any necessary initialization needed for contract
+state needs to happen outside their constructors.
+
+A method called `initializer` is defined on the implementation
+contracts so that it can be called from the proxy for initialization
+work, in our case, setting the contract's owner.
+
+We need to prevent `initializer` from being executed directly on the
+implementation contracts themselves to allow an attacker to set
+themselves as owners on the implementation contract. We do this by
+calling `_disableInitializers` in the implementation contracts. This
+will prevent any method with the `initializer` modifier from being
+executed directly on the implementation contract.
+
+When deploying the Proxy, we encode the implementation's `initialize`
+method and pass it in its constructor. This ensures that the proxy is
+deployed, its implementation set and the constructor called in one
+transaction, preventing a malicious actor from front-running the
+initialization.
+
+Once `initialize` has been called, the `initializer` modifier will
+prevent it from being called again on the proxy.
+
+### Upgrading the Implementation Contract
+
+To upgrade the implementation contract of a Proxy, we call the
+`upgradeToAndCall` method passing in the address of the new
+implementation and encoded functionality to call if necessary.
+
+This will in turn call the `_authorizeUpgrade` method defined in the
+implementation which can do any necessary checks to determine if the
+upgrade is authorized. In our case, we using the `onlyOwner` modifier
+to check that the caller is the owner set on the proxy.
 
 ## Usage
 
