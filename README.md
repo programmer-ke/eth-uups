@@ -109,11 +109,11 @@ Because implementation contracts should work on the Proxy's storage
 and not on their own, Any necessary initialization needed for contract
 state needs to happen outside their constructors.
 
-A method called `initializer` is defined on the implementation
+A method called `initialize` is defined on the implementation
 contracts so that it can be called from the proxy for initialization
 work, in our case, setting the contract's owner.
 
-We need to prevent `initializer` from being executed directly on the
+We need to prevent `initialize` from being executed directly on the
 implementation contracts themselves to allow an attacker to set
 themselves as owners on the implementation contract. We do this by
 calling `_disableInitializers` in the implementation contracts. This
@@ -122,7 +122,7 @@ executed directly on the implementation contract.
 
 When deploying the Proxy, we encode the implementation's `initialize`
 method and pass it in its constructor. This ensures that the proxy is
-deployed, its implementation set and the constructor called in one
+deployed, its implementation set and `initialize` called in one
 transaction, preventing a malicious actor from front-running the
 initialization.
 
