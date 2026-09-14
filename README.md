@@ -2,7 +2,7 @@
 
 A demonstration of ERC-1822 Upgradeable Smart Contracts
 
-The goal is to have a concrete implementation of upgrading a smart
+The goal is to have a concrete example of upgrading a smart
 contract using the Universal Upgradeable Proxy Standard.
 
 ## How it works
@@ -56,7 +56,52 @@ proxy.
   transation.
 - `make getNumber` should now return 123.
 
-This shows that we have successfully upgraded the contract implementation.
+This shows that we have successfully upgraded the contract
+implementation.
+
+## Related Topics
+
+### EIP-1967
+
+The `Proxy` contract is an implementation of an EIP-1967 contract.
+
+The EIP-1967 proposal introduced standardized storage slots for more
+reliable logic upgrades and to enable development of third party tools
+that deal with proxy contracts in a uniform manner
+
+- A special slot where the address of the logic contract is stored
+- Where a [beacon contract][beacon] is used instead, a special slot
+  for its address.
+- A special slot for the address of the admin who's allowed to
+  upgrade the logic contract address.
+  
+[beacon]: https://rareskills.io/post/beacon-proxy
+
+These slots are large pseudorandom slots that are unlikely to collide
+with the low-index storage slots the compiler allocates for the
+implementation contract's state variables.
+
+### Delegatecall
+
+When a contract receives a call to a non-existent function, a special
+function called `fallback` will be executed. In UUPS, a proxy
+contract does not define methods of its own, it only acts as data
+storage and all methods are supposed to be defined in implementation
+contracts.
+
+The `delegatecall` instruction allows a contract to execute the
+bytecode of another contract within its own context. Therefore, when a
+method call is made on the proxy, its `fallback` function uses
+`delegatecall` to execute the relevant method in the implementation
+contract within the proxy's own context. Therefore, any state
+variables defined in the implementation contract and are modified by
+its code in reality are modified in the proxy itself.
+
+State variables in the implementation contract can be thought of as
+placeholders for the actual storage slots that are modified in the
+proxy contract, and should not be re-ordered in upgrades otherwise
+there'll be corruption of state. New state variables should be defined
+after existing ones in order.
 
 ## Usage
 
